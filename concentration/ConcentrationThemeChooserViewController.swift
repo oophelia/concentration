@@ -8,8 +8,12 @@
 
 import UIKit
 
-class ConcentrationThemeChooserViewController: UIViewController, UISplitViewControllerDelegate {
+class ConcentrationThemeChooserViewController: VCLLoggingViewController, UISplitViewControllerDelegate {
 
+    override var vclLoggingName: String{
+        return "ThemeChooser"
+    }
+    
     /*
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,6 +31,7 @@ class ConcentrationThemeChooserViewController: UIViewController, UISplitViewCont
     // set self as split view's delegate, in iphone it's still in split view even it doen't show as split view
     // awakeFromNib is a function that's called on every object that comes out of interface builder
     override func awakeFromNib() {
+        super.awakeFromNib()
         splitViewController?.delegate = self
     }
     

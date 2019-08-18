@@ -9,7 +9,11 @@
 import UIKit
 
 //UIViewController is in UIKit
-class ConcentrationViewController: UIViewController {
+class ConcentrationViewController: VCLLoggingViewController {
+    
+    override var vclLoggingName: String{
+        return "Game"
+    }
     
     // class gets a free init if vars in class have been initialized
     // lazy: it doesn't actually initialize until someone tries to use it, can't have didSet
