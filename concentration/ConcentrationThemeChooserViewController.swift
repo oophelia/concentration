@@ -8,11 +8,13 @@
 
 import UIKit
 
-class ConcentrationThemeChooserViewController: VCLLoggingViewController, UISplitViewControllerDelegate {
+class ConcentrationThemeChooserViewController: UIViewController, UISplitViewControllerDelegate {
 
+    /*
     override var vclLoggingName: String{
         return "ThemeChooser"
     }
+    */
     
     /*
     override func viewDidLoad() {

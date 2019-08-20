@@ -9,11 +9,13 @@
 import UIKit
 
 //UIViewController is in UIKit
-class ConcentrationViewController: VCLLoggingViewController {
+class ConcentrationViewController: UIViewController {
     
+    /*
     override var vclLoggingName: String{
         return "Game"
     }
+    */
     
     // class gets a free init if vars in class have been initialized
     // lazy: it doesn't actually initialize until someone tries to use it, can't have didSet
@@ -23,7 +25,7 @@ class ConcentrationViewController: VCLLoggingViewController {
     // computed properties
     var numberOfPairsOfCards: Int{
         // no set: read only
-            return (cardButtons.count+1) / 2
+            return (visibleCardButtons.count+1) / 2
     }
     
     
@@ -44,8 +46,16 @@ class ConcentrationViewController: VCLLoggingViewController {
             .strokeWidth: 5.0,
             .strokeColor: #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
         ]
-        let attributedString = NSAttributedString(string:"flips:\(flipCount)" , attributes: attribute)
+        // when in compact verticalSizeClass, add a \n
+        let attributedString = NSAttributedString(
+            string: traitCollection.verticalSizeClass == .compact ? "flips:\n\(flipCount)" : "flips:\(flipCount)" , attributes: attribute)
         flipCountLabel.attributedText = attributedString
+    }
+    
+    // everytime traitCollection changes, it will call this func
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        updateFlipCountLabel()
     }
     
     // always have private outlets and actions which are internal implementations
@@ -58,6 +68,16 @@ class ConcentrationViewController: VCLLoggingViewController {
     
     // [UIButton] = Array<UIButton>
     @IBOutlet private var cardButtons: [UIButton]!
+    
+    private var visibleCardButtons: [UIButton]! {
+        return cardButtons?.filter { !$0.superview!.isHidden}
+    }
+    
+    // after rotation, some hidden buttons appear, update them from model
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        updateViewFromModel()
+    }
     
     // MARK: handle card touch behavior
     // var emojiChoices = ["👻","🎃","👻","🎃"]
@@ -72,7 +92,7 @@ class ConcentrationViewController: VCLLoggingViewController {
         // .firstIndex return -> Int? means optional
         // optional : set or not set, each case can associate with data
         // nil always means an optional that is not set
-        if let cardNumber = cardButtons.firstIndex(of: sender){
+        if let cardNumber = visibleCardButtons.firstIndex(of: sender){
             //print("\(cardNumber)")
             //flipCard(withEmoji: emojiChoices[cardNumber], on: sender)
             game.chooseCards(at: cardNumber)
@@ -83,9 +103,9 @@ class ConcentrationViewController: VCLLoggingViewController {
     }
     
     private func updateViewFromModel(){
-        if cardButtons != nil{
-            for index in cardButtons.indices{
-                let button = cardButtons[index]
+        if visibleCardButtons != nil{
+            for index in visibleCardButtons.indices{
+                let button = visibleCardButtons[index]
                 let card = game.cards[index]
                 if card.isFaceUp{
                     button.setTitle(emoji(for: card), for: UIControl.State.normal)
